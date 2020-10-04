@@ -164,10 +164,6 @@ def optic_flow_lk(img_a, img_b, k_size, k_type, sigma=1):
 
     return u, v
 
-
-
-
-
 def reduce_image(image):
     """Reduces an image to half its shape.
 
@@ -192,8 +188,17 @@ def reduce_image(image):
         numpy.array: output image with half the shape, same type as the
                      input image.
     """
+    a = 3/8
+    w = np.array([0.25-a/2, 0.25, a, 0.25, 0.25-a/2])
+    filtered_image = cv2.sepFilter2D(image, cv2.CV_64F, w, w)
 
-    raise NotImplementedError
+    return filtered_image[0:-1:2, 0:-1:2]
+
+
+
+
+
+
 
 
 def gaussian_pyramid(image, levels):
@@ -338,24 +343,16 @@ def hierarchical_lk(img_a, img_b, levels, k_size, k_type, sigma, interpolation,
 
     raise NotImplementedError
 
-# ###################################################################################
-# import os
+###################################################################################
+import os
 
-# # I/O directories
-# input_dir = "input_images"
-# output_dir = "./"
+# I/O directories
+input_dir = "input_images"
+output_dir = "./"
 
 
-# if __name__ == '__main__':
-#     shift_0 = cv2.imread(os.path.join(input_dir, 'TestSeq',
-#                                       'Shift0.png'), 0) / 255.
-#     shift_r2 = cv2.imread(os.path.join(input_dir, 'TestSeq',
-#                                        'ShiftR2.png'), 0) / 255.
-#     shift_r5_u5 = cv2.imread(os.path.join(input_dir, 'TestSeq',
-#                                           'ShiftR5U5.png'), 0) / 255.
-
-#     # Optional: smooth the images if LK doesn't work well on raw images
-#     k_size = 3  # TODO: Select a kernel size
-#     k_type = ''  # TODO: Select a kernel type
-#     sigma = 0  # TODO: Select a sigma value if you are using a gaussian kernel
-#     u, v = optic_flow_lk(shift_0, shift_r2, k_size, k_type, sigma)
+if __name__ == '__main__':
+    img = cv2.imread(os.path.join(input_dir, 'MiniCooper', 'mc01.png'), 0)
+    # cv2.imwrite(os.path.join(output_dir, "input.png"), img)
+    reduced = reduce_image(img)
+    # cv2.imwrite(os.path.join(output_dir, "test.png"), reduced)

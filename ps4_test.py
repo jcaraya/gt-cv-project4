@@ -69,28 +69,28 @@ class Part1(unittest.TestCase):
             self.assertTrue(check_v, error_msg)
 
 
-# class Part2(unittest.TestCase):
+class Part2(unittest.TestCase):
 
-#     def test_reduce(self):
-#         input_imgs = ['test_reduce1_img.npy', 'test_reduce2_img.npy',
-#                       'test_reduce3_img.npy']
-#         ref_imgs = ['test_reduce1_ref.npy', 'test_reduce2_ref.npy',
-#                     'test_reduce3_ref.npy']
+    def test_reduce(self):
+        input_imgs = ['test_reduce1_img.npy', 'test_reduce2_img.npy',
+                      'test_reduce3_img.npy']
+        ref_imgs = ['test_reduce1_ref.npy', 'test_reduce2_ref.npy',
+                    'test_reduce3_ref.npy']
 
-#         for i in range(3):
-#             f1 = input_imgs[i]
-#             f2 = ref_imgs[i]
+        for i in range(3):
+            f1 = input_imgs[i]
+            f2 = ref_imgs[i]
 
-#             test_array = np.load(INPUT_DIR + f1,encoding = 'latin1')
+            test_array = np.load(INPUT_DIR + f1,encoding = 'latin1')
 
-#             reduced = ps4.reduce_image(test_array.copy())
+            reduced = ps4.reduce_image(test_array.copy())
 
-#             ref_reduced = np.load(INPUT_DIR + f2,encoding = 'latin1')
+            ref_reduced = np.load(INPUT_DIR + f2,encoding = 'latin1')
 
-#             correct = np.allclose(reduced, ref_reduced, atol=0.05)
+            correct = np.allclose(reduced, ref_reduced, atol=0.05)
 
-#             self.assertTrue(correct, "Output does not match the reference "
-#                                      "solution.")
+            self.assertTrue(correct, "Output does not match the reference "
+                                     "solution.")
 
 #     def test_expand(self):
 #         input_imgs = ['test_expand1_img.npy', 'test_expand2_img.npy',
