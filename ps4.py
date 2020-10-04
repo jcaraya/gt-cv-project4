@@ -3,6 +3,12 @@
 import numpy as np
 import cv2
 
+
+def write_images(images, prefix='test'):
+    for i, images in enumerate(images):
+        cv2.imwrite("{}{}.png".format(prefix, i), image)
+
+
 # Utility function
 def normalize_and_scale(image_in, scale_range=(0, 255)):
     """Normalizes and scales an image to a given range [0, 255].
@@ -188,11 +194,10 @@ def reduce_image(image):
         numpy.array: output image with half the shape, same type as the
                      input image.
     """
-    a = 3/8
-    w = np.array([0.25-a/2, 0.25, a, 0.25, 0.25-a/2])
+    w = np.array([1, 4, 6, 4, 1]) / 16
     filtered_image = cv2.sepFilter2D(image, cv2.CV_64F, w, w)
 
-    return filtered_image[0:-1:2, 0:-1:2]
+    return filtered_image[::2, ::2]
 
 
 def gaussian_pyramid(image, levels):
@@ -279,8 +284,14 @@ def expand_image(image):
                      width.
     """
 
-    raise NotImplementedError
+    shape = image.shape
+    spaced = np.zeros((2*shape[0], 2*shape[1]))
+    spaced[::2,::2] = image
 
+    w = np.array([1, 4, 6, 4, 1]) / 8
+    dst = cv2.sepFilter2D(spaced, cv2.CV_64F, w, w)
+
+    return dst
 
 def laplacian_pyramid(g_pyr):
     """Creates a Laplacian pyramid from a given Gaussian pyramid.
@@ -293,8 +304,13 @@ def laplacian_pyramid(g_pyr):
     Returns:
         list: Laplacian pyramid, with l_pyr[-1] = g_pyr[-1].
     """
+    # Compute the difference at each l.
+    l_pyr = [g_pyr[i-1] - expand_image(g_pyr[i]) for i in range(1,len(g_pyr))]
 
-    raise NotImplementedError
+    # Add the smallest gaussian at the very end
+    l_pyr.append(g_pyr[-1])
+
+    return l_pyr
 
 
 def warp(image, U, V, interpolation, border_mode):
@@ -365,6 +381,7 @@ output_dir = "./"
 if __name__ == '__main__':
     img = cv2.imread(os.path.join(input_dir, 'MiniCooper', 'mc01.png'), 0)
     cv2.imwrite(os.path.join(output_dir, "input.png"), img)
-    img_list = gaussian_pyramid(img, 3)
-    res = create_combined_img(img_list)
-    cv2.imwrite(os.path.join(output_dir, "test.png"), res)
+    g_pyr = gaussian_pyramid(img, 4)
+    l_pyr = laplacian_pyramid(g_pyr)
+    # for i in range(len(g_pyr)):
+    #     cv2.imwrite(os.path.join(output_dir, "test{}.png".format(i)), g_pyr[i])

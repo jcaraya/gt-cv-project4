@@ -233,27 +233,31 @@ def part_3a_1():
     yos_img_02 = cv2.imread(
         os.path.join(input_dir, 'DataSeq1', 'yos_img_02.jpg'), 0) / 255.
 
-    levels = 1  # Define the number of pyramid levels
+    levels = 3  # Define the number of pyramid levels
     yos_img_01_g_pyr = ps4.gaussian_pyramid(yos_img_01, levels)
     yos_img_02_g_pyr = ps4.gaussian_pyramid(yos_img_02, levels)
 
-    level_id = 0  # TODO: Select the level number (or id) you wish to use
-    k_size = 0 # TODO: Select a kernel size
-    k_type = ""  # TODO: Select a kernel type
-    sigma = 0  # TODO: Select a sigma value if you are using a gaussian kernel
+    # # TODO: Remove this
+    # combined = ps4.create_combined_img(yos_img_02_g_pyr)
+    # cv2.imwrite("test.png", ps4.normalize_and_scale(combined))
+
+    level_id = 0
+    k_size = 95
+    k_type = "uniform"
+    sigma = 0
     u, v = ps4.optic_flow_lk(yos_img_01_g_pyr[level_id],
                              yos_img_02_g_pyr[level_id],
                              k_size, k_type, sigma)
 
-    u, v = scale_u_and_v(u, v, level_id, yos_img_02_g_pyr)
+    # u, v = scale_u_and_v(u, v, level_id, yos_img_02_g_pyr)
 
-    interpolation = cv2.INTER_CUBIC  # You may try different values
-    border_mode = cv2.BORDER_REFLECT101  # You may try different values
-    yos_img_02_warped = ps4.warp(yos_img_02, u, v, interpolation, border_mode)
+    # interpolation = cv2.INTER_CUBIC  # You may try different values
+    # border_mode = cv2.BORDER_REFLECT101  # You may try different values
+    # yos_img_02_warped = ps4.warp(yos_img_02, u, v, interpolation, border_mode)
 
-    diff_yos_img_01_02 = yos_img_01 - yos_img_02_warped
-    cv2.imwrite(os.path.join(output_dir, "ps4-3-a-1.png"),
-                ps4.normalize_and_scale(diff_yos_img))
+    # diff_yos_img_01_02 = yos_img_01 - yos_img_02_warped
+    # cv2.imwrite(os.path.join(output_dir, "ps4-3-a-1.png"),
+    #             ps4.normalize_and_scale(diff_yos_img))
 
 
 def part_3a_2():
@@ -387,8 +391,8 @@ def part_6():
 if __name__ == '__main__':
     # part_1a()
     # part_1b()
-    part_2()
-    # part_3a_1()
+    # part_2()
+    part_3a_1()
     # part_3a_2()
     # part_4a()
     # part_4b()
