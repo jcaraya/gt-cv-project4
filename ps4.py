@@ -195,12 +195,6 @@ def reduce_image(image):
     return filtered_image[0:-1:2, 0:-1:2]
 
 
-
-
-
-
-
-
 def gaussian_pyramid(image, levels):
     """Creates a Gaussian pyramid of a given image.
 
@@ -222,7 +216,13 @@ def gaussian_pyramid(image, levels):
         list: Gaussian pyramid, list of numpy.arrays.
     """
 
-    raise NotImplementedError
+    gaussian_pyramid = [np.copy(image)]
+
+    for _ in range(levels-1):
+        new_level = reduce_image(gaussian_pyramid[-1])
+        gaussian_pyramid.append(new_level)
+
+    return gaussian_pyramid
 
 
 def create_combined_img(img_list):
@@ -244,7 +244,18 @@ def create_combined_img(img_list):
                      from left to right.
     """
 
-    raise NotImplementedError
+    x_size = 0
+    y_size = img_list[0].shape[0]
+    for img in img_list:
+        x_size += img.shape[1]
+
+    dst = np.zeros((y_size, x_size))
+    x_position = 0
+    for img in img_list:
+        dst[0:img.shape[0], x_position:x_position+img.shape[1]] = img
+        x_position = x_position+img.shape[1]
+
+    return dst
 
 
 def expand_image(image):
@@ -353,6 +364,7 @@ output_dir = "./"
 
 if __name__ == '__main__':
     img = cv2.imread(os.path.join(input_dir, 'MiniCooper', 'mc01.png'), 0)
-    # cv2.imwrite(os.path.join(output_dir, "input.png"), img)
-    reduced = reduce_image(img)
-    # cv2.imwrite(os.path.join(output_dir, "test.png"), reduced)
+    cv2.imwrite(os.path.join(output_dir, "input.png"), img)
+    img_list = gaussian_pyramid(img, 3)
+    res = create_combined_img(img_list)
+    cv2.imwrite(os.path.join(output_dir, "test.png"), res)

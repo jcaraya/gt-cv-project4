@@ -113,31 +113,31 @@ class Part2(unittest.TestCase):
 #             self.assertTrue(correct, "Output does not match the reference "
 #                                      "solution.")
 
-#     def test_gaussian_pyramid(self):
-#         input_imgs = ['test_gauss1_pyr.npy', 'test_gauss2_pyr.npy',
-#                       'test_gauss3_pyr.npy']
-#         ref_imgs = ['test_gauss1_pyr_ref.npy', 'test_gauss2_pyr_ref.npy',
-#                     'test_gauss3_pyr_ref.npy']
-#         levels = [4, 2, 4]
+    def test_gaussian_pyramid(self):
+        input_imgs = ['test_gauss1_pyr.npy', 'test_gauss2_pyr.npy',
+                      'test_gauss3_pyr.npy']
+        ref_imgs = ['test_gauss1_pyr_ref.npy', 'test_gauss2_pyr_ref.npy',
+                    'test_gauss3_pyr_ref.npy']
+        levels = [4, 2, 4]
 
-#         for i in range(3):
-#             f1 = input_imgs[i]
-#             f2 = ref_imgs[i]
-#             l = levels[i]
+        for i in range(3):
+            f1 = input_imgs[i]
+            f2 = ref_imgs[i]
+            l = levels[i]
 
-#             test_array = np.load(INPUT_DIR + f1,encoding = 'latin1')
+            test_array = np.load(INPUT_DIR + f1,encoding='latin1')
 
-#             g_pyr = ps4.gaussian_pyramid(test_array.copy(), levels=l)
+            g_pyr = ps4.gaussian_pyramid(test_array.copy(), levels=l)
 
-#             g_pyr_ref = np.load(INPUT_DIR + f2,encoding = 'latin1')
+            g_pyr_ref = np.load(INPUT_DIR + f2,encoding='latin1',allow_pickle=True)
 
-#             for l in range(len(g_pyr)):
-#                 correct = np.allclose(g_pyr[l], g_pyr_ref[l], atol=0.1)
+            for l in range(len(g_pyr)):
+                correct = np.allclose(g_pyr[l], g_pyr_ref[l], atol=0.1)
 
-#                 error_msg = "Value at level {} does not match the answer." \
-#                             "".format(l)
+                error_msg = "Value at level {} does not match the answer." \
+                            "".format(l)
 
-#                 self.assertTrue(correct, error_msg)
+                self.assertTrue(correct, error_msg)
 
 #     def test_laplacian_pyramid(self):
 #         input_imgs = ['test_lapl1_pyr.npy', 'test_lapl2_pyr.npy',
