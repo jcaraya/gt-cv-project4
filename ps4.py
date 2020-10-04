@@ -160,10 +160,22 @@ def optic_flow_lk(img_a, img_b, k_size, k_type, sigma=1):
     elif k_type == 'gaussian':
         a_arrays, b_arrays = applyGausian(Ix,Iy, It, ksize, sigma)
 
+    # Set the a and b matrices to be solved.
     shape = img_a.shape
     a = np.stack(a_arrays, axis=2).reshape(shape[0], shape[1], 2, 2)
     b = np.stack(b_arrays, axis=2)
 
+    # Compute the determinant to remove the elements that are
+    # causing singularity.
+    a_det = np.linalg.det(a)
+
+    # Set the change the values of the places where a singular matrix is received.
+    # In the case of matrix a we change the values to an identity matrix. b is set
+    # to zeros.
+    a[a_det == 0] = np.array([[1, 0], [0, 1]])
+    b[a_det == 0] = np.array([0, 0])
+
+    # Solve the equation
     x = np.linalg.solve(a, b)
     u = x[:, :, 0]
     v = x[:, :, 1]
