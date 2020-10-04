@@ -138,10 +138,9 @@ def optic_flow_lk(img_a, img_b, k_size, k_type, sigma=1):
     if k_type == '':
         k_type = 'uniform'
 
-    assert k_type in ['uniform', 'gaussian'], "Invlid k_type: '{}'".format(k_type)
-
-
-    shape = img_a.shape
+    # Validate the provided type
+    assert k_type in ['uniform', 'gaussian'], \
+        "Invlid k_type: '{}'".format(k_type)
 
     # Compute the grandients of the image
     Ix = gradient_x(img_a)
@@ -155,12 +154,9 @@ def optic_flow_lk(img_a, img_b, k_size, k_type, sigma=1):
     elif k_type == 'gaussian':
         a_arrays, b_arrays = applyGausian(Ix,Iy, It, ksize, sigma)
 
+    shape = img_a.shape
     a = np.stack(a_arrays, axis=2).reshape(shape[0], shape[1], 2, 2)
     b = np.stack(b_arrays, axis=2)
-
-    # print(a.shape)
-    # a_det = np.linalg.det(b)
-    # print(a_det.shape)
 
     x = np.linalg.solve(a, b)
     u = x[:, :, 0]
@@ -343,23 +339,23 @@ def hierarchical_lk(img_a, img_b, levels, k_size, k_type, sigma, interpolation,
     raise NotImplementedError
 
 # ###################################################################################
-import os
+# import os
 
-# I/O directories
-input_dir = "input_images"
-output_dir = "./"
+# # I/O directories
+# input_dir = "input_images"
+# output_dir = "./"
 
 
-if __name__ == '__main__':
-    shift_0 = cv2.imread(os.path.join(input_dir, 'TestSeq',
-                                      'Shift0.png'), 0) / 255.
-    shift_r2 = cv2.imread(os.path.join(input_dir, 'TestSeq',
-                                       'ShiftR2.png'), 0) / 255.
-    shift_r5_u5 = cv2.imread(os.path.join(input_dir, 'TestSeq',
-                                          'ShiftR5U5.png'), 0) / 255.
+# if __name__ == '__main__':
+#     shift_0 = cv2.imread(os.path.join(input_dir, 'TestSeq',
+#                                       'Shift0.png'), 0) / 255.
+#     shift_r2 = cv2.imread(os.path.join(input_dir, 'TestSeq',
+#                                        'ShiftR2.png'), 0) / 255.
+#     shift_r5_u5 = cv2.imread(os.path.join(input_dir, 'TestSeq',
+#                                           'ShiftR5U5.png'), 0) / 255.
 
-    # Optional: smooth the images if LK doesn't work well on raw images
-    k_size = 3  # TODO: Select a kernel size
-    k_type = ''  # TODO: Select a kernel type
-    sigma = 0  # TODO: Select a sigma value if you are using a gaussian kernel
-    u, v = optic_flow_lk(shift_0, shift_r2, k_size, k_type, sigma)
+#     # Optional: smooth the images if LK doesn't work well on raw images
+#     k_size = 3  # TODO: Select a kernel size
+#     k_type = ''  # TODO: Select a kernel type
+#     sigma = 0  # TODO: Select a sigma value if you are using a gaussian kernel
+#     u, v = optic_flow_lk(shift_0, shift_r2, k_size, k_type, sigma)

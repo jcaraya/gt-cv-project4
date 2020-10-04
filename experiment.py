@@ -143,33 +143,40 @@ def part_1b():
     # PART B1
     # =======
 
-    # gaussian_sigma = 5
-    # gaussian_ksize = (9, 9)
+    gaussian_sigma = 5
+    gaussian_ksize = (9, 9)
 
-    # s_shift_0 = cv2.GaussianBlur(shift_0, gaussian_ksize, gaussian_sigma)
-    # s_shift_r10 = cv2.GaussianBlur(shift_r10, gaussian_ksize, gaussian_sigma)
+    s_shift_0 = cv2.GaussianBlur(shift_0, gaussian_ksize, gaussian_sigma)
+    s_shift_r10 = cv2.GaussianBlur(shift_r10, gaussian_ksize, gaussian_sigma)
 
-    # k_size = 85
-    # k_type = 'gaussian'
-    # sigma = 30
-    # u, v = ps4.optic_flow_lk(s_shift_0, s_shift_r10, k_size, k_type, sigma)
+    k_size = 85
+    k_type = 'gaussian'
+    sigma = 30
+    u, v = ps4.optic_flow_lk(s_shift_0, s_shift_r10, k_size, k_type, sigma)
 
-    # u_v = quiver(u, v, scale=3, stride=10)
-    # cv2.imwrite(os.path.join(output_dir, "ps4-1-b-1.png"), u_v)
+    u_v = quiver(u, v, scale=3, stride=10)
+    cv2.imwrite(os.path.join(output_dir, "ps4-1-b-1.png"), u_v)
 
     # =======
     # PART B2
     # =======
 
-    gaussian_sigma = 5
-    gaussian_ksize = (35, 35)
+    gaussian_sigma = 15
+    gaussian_ksize = (27,27)
+    s_shift_0 = np.copy(shift_0)
+    s_shift_r20 = np.copy(shift_r20)
     s_shift_0 = cv2.GaussianBlur(shift_0, gaussian_ksize, gaussian_sigma)
     s_shift_r20 = cv2.GaussianBlur(shift_r20, gaussian_ksize, gaussian_sigma)
 
-    k_size = 55
-    k_type = 'gaussian'
-    sigma = 10
+    k_size = 95
+    k_type = 'uniform'
+    sigma = 0
     u, v = ps4.optic_flow_lk(s_shift_0, s_shift_r20, k_size, k_type, sigma)
+
+    gaussian_sigma = 25
+    gaussian_ksize = (25, 25)
+    u = cv2.GaussianBlur(u, gaussian_ksize, gaussian_sigma)
+    v = cv2.GaussianBlur(v, gaussian_ksize, gaussian_sigma)
 
     u_v = quiver(u, v, scale=1, stride=10)
     cv2.imwrite(os.path.join(output_dir, "ps4-1-b-2.png"), u_v)
@@ -178,19 +185,26 @@ def part_1b():
     # PART B3
     # =======
 
-    # gaussian_sigma = 5
-    # gaussian_ksize = (9, 9)
-    # s_shift_0 = cv2.GaussianBlur(shift_0, gaussian_ksize, gaussian_sigma)
-    # s_shift_r40 = cv2.GaussianBlur(shift_r40, gaussian_ksize, gaussian_sigma)
+    gaussian_sigma = 100
+    gaussian_ksize = (55,55)
+    s_shift_0 = np.copy(shift_0)
+    s_shift_r40 = np.copy(shift_r40)
+    s_shift_0 = cv2.GaussianBlur(shift_0, gaussian_ksize, gaussian_sigma)
+    s_shift_r40 = cv2.GaussianBlur(shift_r40, gaussian_ksize, gaussian_sigma)
 
-    # k_size = 85
-    # k_type = 'gaussian'
-    # sigma = 30
-    # u, v = ps4.optic_flow_lk(s_shift_0, s_shift_r40, k_size, k_type, sigma)
+    k_size = 95
+    k_type = 'uniform'
+    sigma = 50
+    u, v = ps4.optic_flow_lk(s_shift_0, s_shift_r40, k_size, k_type, sigma)
 
-    # # Flow image
-    # u_v = quiver(u, v, scale=3, stride=10)
-    # cv2.imwrite(os.path.join(output_dir, "ps4-1-b-3.png"), u_v)
+    gaussian_sigma = 40
+    gaussian_ksize = (35, 35)
+    u = cv2.GaussianBlur(u, gaussian_ksize, gaussian_sigma)
+    v = cv2.GaussianBlur(v, gaussian_ksize, gaussian_sigma)
+
+    # Flow image
+    u_v = quiver(u, v, scale=0.4, stride=10)
+    cv2.imwrite(os.path.join(output_dir, "ps4-1-b-3.png"), u_v)
 
 
 def part_2():
@@ -371,7 +385,7 @@ def part_6():
 
 
 if __name__ == '__main__':
-    part_1a()
+    # part_1a()
     part_1b()
     # part_2()
     # part_3a_1()
