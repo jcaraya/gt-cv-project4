@@ -5,8 +5,8 @@ import cv2
 
 
 def write_images(images, prefix='test'):
-    for i, images in enumerate(images):
-        cv2.imwrite("{}{}.png".format(prefix, i), image)
+    for i, image in enumerate(images):
+        cv2.imwrite("{}{}.png".format(prefix, i), normalize_and_scale(image))
 
 
 # Utility function
@@ -349,7 +349,21 @@ def warp(image, U, V, interpolation, border_mode):
                      warped[y, x] = image[y + V[y, x], x + U[y, x]]
     """
 
-    raise NotImplementedError
+    # Based on the code snippet provided in the description of PS4
+    rows, columns = image.shape
+    X, Y = np.meshgrid(range(columns), range(rows))
+
+    X = X + U
+    Y = Y + V
+
+    X = X.astype(np.float32)
+    Y = Y.astype(np.float32)
+
+
+    result = np.zeros(image.shape)
+    cv2.remap(image, X, Y, interpolation, dst=result, borderMode=border_mode)
+
+    return result
 
 
 def hierarchical_lk(img_a, img_b, levels, k_size, k_type, sigma, interpolation,
@@ -383,17 +397,17 @@ def hierarchical_lk(img_a, img_b, levels, k_size, k_type, sigma, interpolation,
     raise NotImplementedError
 
 ###################################################################################
-import os
+# import os
 
-# I/O directories
-input_dir = "input_images"
-output_dir = "./"
+# # I/O directories
+# input_dir = "input_images"
+# output_dir = "./"
 
 
-if __name__ == '__main__':
-    img = cv2.imread(os.path.join(input_dir, 'MiniCooper', 'mc01.png'), 0)
-    cv2.imwrite(os.path.join(output_dir, "input.png"), img)
-    g_pyr = gaussian_pyramid(img, 4)
-    l_pyr = laplacian_pyramid(g_pyr)
-    # for i in range(len(g_pyr)):
-    #     cv2.imwrite(os.path.join(output_dir, "test{}.png".format(i)), g_pyr[i])
+# if __name__ == '__main__':
+#     img = cv2.imread(os.path.join(input_dir, 'MiniCooper', 'mc01.png'), 0)
+#     cv2.imwrite(os.path.join(output_dir, "input.png"), img)
+#     g_pyr = gaussian_pyramid(img, 4)
+#     l_pyr = laplacian_pyramid(g_pyr)
+#     # for i in range(len(g_pyr)):
+#     #     cv2.imwrite(os.path.join(output_dir, "test{}.png".format(i)), g_pyr[i])

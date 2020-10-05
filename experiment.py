@@ -68,8 +68,12 @@ def scale_u_and_v(u, v, level, pyr):
                              pyr[0].shape
     """
 
-    # TODO: Your code here
-    raise NotImplementedError
+    for i in range(level):
+        u = 2 * ps4.expand_image(u)
+        v = 2 * ps4.expand_image(v)
+
+    shape = pyr[0].shape
+    return u[:shape[0], :shape[1]], v[:shape[0], :shape[1]]
 
 
 def part_1a():
@@ -233,31 +237,35 @@ def part_3a_1():
     yos_img_02 = cv2.imread(
         os.path.join(input_dir, 'DataSeq1', 'yos_img_02.jpg'), 0) / 255.
 
-    levels = 3  # Define the number of pyramid levels
+    levels = 5  # Define the number of pyramid levels
     yos_img_01_g_pyr = ps4.gaussian_pyramid(yos_img_01, levels)
     yos_img_02_g_pyr = ps4.gaussian_pyramid(yos_img_02, levels)
 
-    # # TODO: Remove this
-    # combined = ps4.create_combined_img(yos_img_02_g_pyr)
-    # cv2.imwrite("test.png", ps4.normalize_and_scale(combined))
+    ps4.write_images(yos_img_01_g_pyr, 'part3')
 
-    level_id = 0
-    k_size = 95
+    level_id = 1
+    k_size = 15
     k_type = "uniform"
-    sigma = 0
+    sigma = 10
     u, v = ps4.optic_flow_lk(yos_img_01_g_pyr[level_id],
                              yos_img_02_g_pyr[level_id],
                              k_size, k_type, sigma)
 
-    # u, v = scale_u_and_v(u, v, level_id, yos_img_02_g_pyr)
+    u, v = scale_u_and_v(u, v, level_id, yos_img_02_g_pyr)
 
-    # interpolation = cv2.INTER_CUBIC  # You may try different values
-    # border_mode = cv2.BORDER_REFLECT101  # You may try different values
-    # yos_img_02_warped = ps4.warp(yos_img_02, u, v, interpolation, border_mode)
+    # TODO: Remove this
+    # u_v = quiver(u, v, scale=7, stride=10)
+    # cv2.imwrite(os.path.join(output_dir, "test1.png"), u_v)
 
-    # diff_yos_img_01_02 = yos_img_01 - yos_img_02_warped
-    # cv2.imwrite(os.path.join(output_dir, "ps4-3-a-1.png"),
-    #             ps4.normalize_and_scale(diff_yos_img))
+    interpolation = cv2.INTER_CUBIC  # You may try different values
+    border_mode = cv2.BORDER_REFLECT101  # You may try different values
+    yos_img_02_warped = ps4.warp(yos_img_02, u, v, interpolation, border_mode)
+
+    diff_yos_img = yos_img_01 - yos_img_02_warped
+    cv2.imwrite(os.path.join(output_dir, "ps4-3-a-1.png"),
+                ps4.normalize_and_scale(diff_yos_img))
+    cv2.imwrite(os.path.join(output_dir, "res1.png"),
+                ps4.normalize_and_scale(diff_yos_img))
 
 
 def part_3a_2():
@@ -266,14 +274,14 @@ def part_3a_2():
     yos_img_03 = cv2.imread(
         os.path.join(input_dir, 'DataSeq1', 'yos_img_03.jpg'), 0) / 255.
 
-    levels = 1  # Define the number of pyramid levels
+    levels = 3  # Define the number of pyramid levels
     yos_img_02_g_pyr = ps4.gaussian_pyramid(yos_img_02, levels)
     yos_img_03_g_pyr = ps4.gaussian_pyramid(yos_img_03, levels)
 
-    level_id = 1 # TODO: Select the level number (or id) you wish to use
-    k_size = 0 # TODO: Select a kernel size
-    k_type = ""  # TODO: Select a kernel type
-    sigma = 0 # TODO: Select a sigma value if you are using a gaussian kernel
+    level_id = 1
+    k_size = 15
+    k_type = 'uniform'
+    sigma = 0
     u, v = ps4.optic_flow_lk(yos_img_02_g_pyr[level_id],
                              yos_img_03_g_pyr[level_id],
                              k_size, k_type, sigma)
@@ -299,9 +307,9 @@ def part_4a():
     shift_r40 = cv2.imread(os.path.join(input_dir, 'TestSeq',
                                         'ShiftR40.png'), 0) / 255.
 
-    levels = 1  # TODO: Define the number of levels
-    k_size = 0  # TODO: Select a kernel size
-    k_type = ""  # TODO: Select a kernel type
+    levels = 1
+    k_size = 0
+    k_type = ""
     sigma = 0  # TODO: Select a sigma value if you are using a gaussian kernel
     interpolation = cv2.INTER_CUBIC  # You may try different values
     border_mode = cv2.BORDER_REFLECT101  # You may try different values
@@ -393,7 +401,7 @@ if __name__ == '__main__':
     # part_1b()
     # part_2()
     part_3a_1()
-    # part_3a_2()
+    part_3a_2()
     # part_4a()
     # part_4b()
     # part_5a()
