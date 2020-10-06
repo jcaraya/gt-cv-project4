@@ -366,6 +366,17 @@ def warp(image, U, V, interpolation, border_mode):
     return result
 
 
+def scale_u_and_v(u, v, level, pyr):
+    for _ in range(level):
+        u = 2 * expand_image(u)
+        v = 2 * expand_image(v)
+
+    print('scale:', u.shape)
+    shape = pyr[0].shape
+    return u[:shape[0], :shape[1]], v[:shape[0], :shape[1]]
+
+
+
 def hierarchical_lk(img_a, img_b, levels, k_size, k_type, sigma, interpolation,
                     border_mode):
     """Computes the optic flow using Hierarchical Lucas-Kanade.
@@ -394,7 +405,35 @@ def hierarchical_lk(img_a, img_b, levels, k_size, k_type, sigma, interpolation,
                              same size and type as U.
     """
 
-    raise NotImplementedError
+    pyr_a = gaussian_pyramid(img_a, levels)
+    pyr_b = gaussian_pyramid(img_b, levels)
+
+    # Initialize u and v with the sizes of level K+1. Note that this
+    # value is not part of the gaussian pyramid. So, we compute its
+    # size by removing the pixels as it is removed in the REDUCE
+    # operation.
+    u = np.zeros(pyr_a[-1].shape)[::2, ::2]
+    v = np.zeros(pyr_a[-1].shape)[::2, ::2]
+
+    for level in range(levels-1, -1, -1):
+
+        # Expand the u and v array.
+        u_p = 2 * expand_image(u)
+        v_p = 2 * expand_image(v)
+
+        # Remove excessive edges if any after the expansion process.
+        shape = pyr_a[level].shape
+        u_p, v_p = u_p[:shape[0], :shape[1]], v_p[:shape[0], :shape[1]]
+
+        # Compute the warped version of image b.
+        warped = warp(pyr_b[level], u_p, v_p, interpolation, border_mode)
+        u_delta, v_delta = optic_flow_lk(pyr_a[level], warped, k_size, k_type, sigma)
+
+        # Add the resulting delta.
+        u = u_p + u_delta
+        v = v_p + v_delta
+
+    return u, v
 
 ###################################################################################
 # import os
@@ -403,11 +442,41 @@ def hierarchical_lk(img_a, img_b, levels, k_size, k_type, sigma, interpolation,
 # input_dir = "input_images"
 # output_dir = "./"
 
+# def quiver(u, v, scale, stride, color=(0, 255, 0)):
+
+#     img_out = np.zeros((v.shape[0], u.shape[1], 3), dtype=np.uint8)
+
+#     for y in range(0, v.shape[0], stride):
+
+#         for x in range(0, u.shape[1], stride):
+
+#             cv2.line(img_out, (x, y), (x + int(u[y, x] * scale),
+#                                        y + int(v[y, x] * scale)), color, 1)
+#             cv2.circle(img_out, (x + int(u[y, x] * scale),
+#                                  y + int(v[y, x] * scale)), 1, color, 1)
+#     return img_out
+
 
 # if __name__ == '__main__':
-#     img = cv2.imread(os.path.join(input_dir, 'MiniCooper', 'mc01.png'), 0)
-#     cv2.imwrite(os.path.join(output_dir, "input.png"), img)
-#     g_pyr = gaussian_pyramid(img, 4)
-#     l_pyr = laplacian_pyramid(g_pyr)
-#     # for i in range(len(g_pyr)):
-#     #     cv2.imwrite(os.path.join(output_dir, "test{}.png".format(i)), g_pyr[i])
+#     shift_0 = cv2.imread(os.path.join(input_dir, 'TestSeq',
+#                                       'Shift0.png'), 0) / 255.
+#     shift_r10 = cv2.imread(os.path.join(input_dir, 'TestSeq',
+#                                         'ShiftR10.png'), 0) / 255.
+#     shift_r20 = cv2.imread(os.path.join(input_dir, 'TestSeq',
+#                                         'ShiftR20.png'), 0) / 255.
+#     shift_r40 = cv2.imread(os.path.join(input_dir, 'TestSeq',
+#                                         'ShiftR40.png'), 0) / 255.
+#     # =======
+#     # PART B1
+#     # =======
+
+#     levels = 5
+#     k_size = 65
+#     k_type = 'gaussian'
+#     sigma = 30
+#     interpolation = cv2.INTER_CUBIC
+#     border_mode = cv2.BORDER_REFLECT101
+#     u, v = hierarchical_lk(shift_0, shift_r40, levels, k_size, k_type, sigma, interpolation, border_mode)
+
+#     u_v = quiver(u, v, scale=1.5, stride=10)
+#     cv2.imwrite(os.path.join(output_dir, "last.png"), u_v)

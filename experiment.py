@@ -68,7 +68,7 @@ def scale_u_and_v(u, v, level, pyr):
                              pyr[0].shape
     """
 
-    for i in range(level):
+    for _ in range(level):
         u = 2 * ps4.expand_image(u)
         v = 2 * ps4.expand_image(v)
 
@@ -307,30 +307,51 @@ def part_4a():
     shift_r40 = cv2.imread(os.path.join(input_dir, 'TestSeq',
                                         'ShiftR40.png'), 0) / 255.
 
-    levels = 1
-    k_size = 0
-    k_type = ""
-    sigma = 0  # TODO: Select a sigma value if you are using a gaussian kernel
-    interpolation = cv2.INTER_CUBIC  # You may try different values
-    border_mode = cv2.BORDER_REFLECT101  # You may try different values
+    levels = 5
+    k_size = 13
+    k_type = 'gaussian'
+    sigma = 15
+    interpolation = cv2.INTER_CUBIC
+    border_mode = cv2.BORDER_REFLECT101
 
     u10, v10 = ps4.hierarchical_lk(shift_0, shift_r10, levels, k_size, k_type,
                                    sigma, interpolation, border_mode)
 
-    u_v = quiver(u10, v10, scale=3, stride=10)
+    gaussian_sigma = 10
+    gaussian_ksize = (15, 15)
+    u10 = cv2.GaussianBlur(u10, gaussian_ksize, gaussian_sigma)
+    v10 = cv2.GaussianBlur(v10, gaussian_ksize, gaussian_sigma)
+
+    u_v = quiver(u10, v10, scale=1, stride=10)
     cv2.imwrite(os.path.join(output_dir, "ps4-4-a-1.png"), u_v)
 
-    # You may want to try different parameters for the remaining function
-    # calls.
+
+    levels = 5
+    k_size = 15
+    k_type = 'gaussian'
+    sigma = 3
+    interpolation = cv2.INTER_CUBIC
+    border_mode = cv2.BORDER_REFLECT101
     u20, v20 = ps4.hierarchical_lk(shift_0, shift_r20, levels, k_size, k_type,
                                    sigma, interpolation, border_mode)
 
-    u_v = quiver(u20, v20, scale=3, stride=10)
+    gaussian_sigma = 20
+    gaussian_ksize = (25, 25)
+    u20 = cv2.GaussianBlur(u20, gaussian_ksize, gaussian_sigma)
+    v20 = cv2.GaussianBlur(v20, gaussian_ksize, gaussian_sigma)
+
+    u_v = quiver(u20, v20, scale=0.4, stride=10)
     cv2.imwrite(os.path.join(output_dir, "ps4-4-a-2.png"), u_v)
+
+    levels = 5
+    k_size = 67
+    k_type = 'uniform'
+    sigma = 70
 
     u40, v40 = ps4.hierarchical_lk(shift_0, shift_r40, levels, k_size, k_type,
                                    sigma, interpolation, border_mode)
-    u_v = quiver(u40, v40, scale=3, stride=10)
+
+    u_v = quiver(u40, v40, scale=1, stride=10)
     cv2.imwrite(os.path.join(output_dir, "ps4-4-a-3.png"), u_v)
 
 
@@ -340,17 +361,17 @@ def part_4b():
     urban_img_02 = cv2.imread(
         os.path.join(input_dir, 'Urban2', 'urban02.png'), 0) / 255.
 
-    levels = 1  # TODO: Define the number of levels
-    k_size = 0  # TODO: Select a kernel size
-    k_type = ""  # TODO: Select a kernel type
-    sigma = 0  # TODO: Select a sigma value if you are using a gaussian kernel
+    levels = 6
+    k_size = 9
+    k_type = "gaussian"
+    sigma = 30
     interpolation = cv2.INTER_CUBIC  # You may try different values
     border_mode = cv2.BORDER_REFLECT101  # You may try different values
 
     u, v = ps4.hierarchical_lk(urban_img_01, urban_img_02, levels, k_size,
                                k_type, sigma, interpolation, border_mode)
 
-    u_v = quiver(u, v, scale=3, stride=10)
+    u_v = quiver(u, v, scale=0.2, stride=10)
     cv2.imwrite(os.path.join(output_dir, "ps4-4-b-1.png"), u_v)
 
     interpolation = cv2.INTER_CUBIC  # You may try different values
@@ -400,10 +421,10 @@ if __name__ == '__main__':
     # part_1a()
     # part_1b()
     # part_2()
-    part_3a_1()
-    part_3a_2()
+    # part_3a_1()
+    # part_3a_2()
     # part_4a()
-    # part_4b()
+    part_4b()
     # part_5a()
     # part_5b()
     # part_6()

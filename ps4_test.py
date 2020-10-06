@@ -166,124 +166,124 @@ class Part2(unittest.TestCase):
                 self.assertTrue(correct, error_msg)
 
 
-# class Part3(unittest.TestCase):
-#     @classmethod
-#     def setUpClass(self):
-#         self.input_imgs_1 = ['test_warp1.npy', 'test_warp3.npy',
-#                              'test_warp5.npy']
-#         self.input_imgs_2 = ['test_warp2.npy', 'test_warp4.npy',
-#                              'test_warp6.npy']
-#         self.input_flows = ['u_v1.npy', 'u_v2.npy', 'u_v3.npy']
+class Part3(unittest.TestCase):
+    @classmethod
+    def setUpClass(self):
+        self.input_imgs_1 = ['test_warp1.npy', 'test_warp3.npy',
+                             'test_warp5.npy']
+        self.input_imgs_2 = ['test_warp2.npy', 'test_warp4.npy',
+                             'test_warp6.npy']
+        self.input_flows = ['u_v1.npy', 'u_v2.npy', 'u_v3.npy']
 
-#         self.r_val = [6, 5, 8]
-#         self.c_val = [9, 8, 7]
+        self.r_val = [6, 5, 8]
+        self.c_val = [9, 8, 7]
 
-#         self.bv = [168, 139, 242]
+        self.bv = [168, 139, 242]
 
-#     def test_warp(self):
+    def test_warp(self):
 
-#         for i in range(2):
-#             f1 = self.input_imgs_1[i]  # Not used
-#             f2 = self.input_imgs_2[i]
-#             f3 = self.input_flows[i]
+        for i in range(2):
+            f1 = self.input_imgs_1[i]  # Not used
+            f2 = self.input_imgs_2[i]
+            f3 = self.input_flows[i]
 
-#             img1 = np.load(INPUT_DIR + f1,encoding = 'latin1')  # Not used
-#             img2 = np.load(INPUT_DIR + f2,encoding = 'latin1')
-#             u_v = np.load(INPUT_DIR + f3,encoding = 'latin1')
+            img1 = np.load(INPUT_DIR + f1,encoding = 'latin1')  # Not used
+            img2 = np.load(INPUT_DIR + f2,encoding = 'latin1')
+            u_v = np.load(INPUT_DIR + f3,encoding = 'latin1')
 
-#             u = u_v[:, :, 0]
-#             v = u_v[:, :, 1]
+            u = u_v[:, :, 0]
+            v = u_v[:, :, 1]
 
-#             warped = ps4.warp(img2.copy(), u.copy(), v.copy(),
-#                               cv2.INTER_CUBIC, cv2.BORDER_REFLECT101)
+            warped = ps4.warp(img2.copy(), u.copy(), v.copy(),
+                              cv2.INTER_CUBIC, cv2.BORDER_REFLECT101)
 
-#             r = self.r_val[i]
-#             c = self.c_val[i]
+            r = self.r_val[i]
+            c = self.c_val[i]
 
-#             box_value = self.bv[i]
+            box_value = self.bv[i]
 
-#             center_box_average = np.mean(warped[r:3 * r, c:3 * c])
-#             correct_center_box = abs(center_box_average - box_value) <= 0.51
+            center_box_average = np.mean(warped[r:3 * r, c:3 * c])
+            correct_center_box = abs(center_box_average - box_value) <= 0.51
 
-#             error_msg = "Center box average pixel value is greater than the " \
-#                         "value used in the input image."
+            error_msg = "Center box average pixel value is greater than the " \
+                        "value used in the input image."
 
-#             self.assertTrue(correct_center_box, error_msg)
+            self.assertTrue(correct_center_box, error_msg)
 
-#             warped_without_center = np.copy(warped)
-#             warped_without_center[r:3 * r, c:3 * c] = 0.
+            warped_without_center = np.copy(warped)
+            warped_without_center[r:3 * r, c:3 * c] = 0.
 
-#             average_warped_img = np.mean(warped_without_center)
-#             center_box_average = box_value * 0.15
-#             correct_warped_img = center_box_average >= average_warped_img
+            average_warped_img = np.mean(warped_without_center)
+            center_box_average = box_value * 0.15
+            correct_warped_img = center_box_average >= average_warped_img
 
-#             error_msg = "Average of values outside the center box area are " \
-#                         "greater than the allowed amount."
+            error_msg = "Average of values outside the center box area are " \
+                        "greater than the allowed amount."
 
-#             self.assertTrue(correct_warped_img, error_msg)
+            self.assertTrue(correct_warped_img, error_msg)
 
 
-# class Part4(unittest.TestCase):
-#     @classmethod
-#     def setUpClass(self):
-#         self.input_imgs_1 = ['test_hlk1.png', 'test_hlk3.png', 'test_hlk5.png']
+class Part4(unittest.TestCase):
+    @classmethod
+    def setUpClass(self):
+        self.input_imgs_1 = ['test_hlk1.png', 'test_hlk3.png', 'test_hlk5.png']
 
-#         self.input_imgs_2 = ['test_hlk2.png', 'test_hlk4.png', 'test_hlk6.png']
+        self.input_imgs_2 = ['test_hlk2.png', 'test_hlk4.png', 'test_hlk6.png']
 
-#         self.delta_c = [-7, -1, 1]
-#         self.delta_r = [2, 6, 5]
+        self.delta_c = [-7, -1, 1]
+        self.delta_r = [2, 6, 5]
 
-#         self.r_val = [17, 17, 16]
-#         self.c_val = [13, 17, 18]
+        self.r_val = [17, 17, 16]
+        self.c_val = [13, 17, 18]
 
-#         self.cb = [(34, 26), (34, 34), (32, 36)]
+        self.cb = [(34, 26), (34, 34), (32, 36)]
 
-#         self.k_size = 15
-#         self.k_type = 'uniform'
+        self.k_size = 15
+        self.k_type = 'uniform'
 
-#     def test_optic_flow_HLK(self):
+    def test_optic_flow_HLK(self):
 
-#         for i in range(3):
+        for i in range(3):
 
-#             f1 = self.input_imgs_1[i]
-#             f2 = self.input_imgs_2[i]
+            f1 = self.input_imgs_1[i]
+            f2 = self.input_imgs_2[i]
 
-#             img1 = cv2.imread(INPUT_DIR + f1, 0) / 255.
-#             img2 = cv2.imread(INPUT_DIR + f2, 0) / 255.
+            img1 = cv2.imread(INPUT_DIR + f1, 0) / 255.
+            img2 = cv2.imread(INPUT_DIR + f2, 0) / 255.
 
-#             u, v = ps4.hierarchical_lk(img1.copy(), img2.copy(), 3,
-#                                        self.k_size, self.k_type, 1.,
-#                                        cv2.INTER_CUBIC, cv2.BORDER_REFLECT101)
+            u, v = ps4.hierarchical_lk(img1.copy(), img2.copy(), 3,
+                                       self.k_size, self.k_type, 1.,
+                                       cv2.INTER_CUBIC, cv2.BORDER_REFLECT101)
 
-#             r = self.r_val[i]
-#             c = self.c_val[i]
+            r = self.r_val[i]
+            c = self.c_val[i]
 
-#             d_c = self.delta_c[i]
-#             d_r = self.delta_r[i]
+            d_c = self.delta_c[i]
+            d_r = self.delta_r[i]
 
-#             center_box = self.cb[i]
+            center_box = self.cb[i]
 
-#             u_mean = np.mean(u[r:r + center_box[0],
-#                              c:c + center_box[1]])
+            u_mean = np.mean(u[r:r + center_box[0],
+                             c:c + center_box[1]])
 
-#             max_diff = abs(d_c) * .1 +.21
-#             check_u = abs(u_mean - d_c) <= max_diff
+            max_diff = abs(d_c) * .1 +.21
+            check_u = abs(u_mean - d_c) <= max_diff
 
-#             error_msg = "Average of U values in the area where there is " \
-#                         "movement is greater than the allowed amount."
+            error_msg = "Average of U values in the area where there is " \
+                        "movement is greater than the allowed amount."
 
-#             self.assertTrue(check_u, error_msg)
+            self.assertTrue(check_u, error_msg)
 
-#             v_mean = np.mean(v[r:r + center_box[0],
-#                              c:c + center_box[1]])
+            v_mean = np.mean(v[r:r + center_box[0],
+                             c:c + center_box[1]])
 
-#             max_diff = abs(d_r) * .1 + .21
-#             check_v = abs(v_mean - d_r) <= max_diff
+            max_diff = abs(d_r) * .1 + .21
+            check_v = abs(v_mean - d_r) <= max_diff
 
-#             error_msg = "Average of V values in the area where there is " \
-#                         "movement is greater than the allowed amount."
+            error_msg = "Average of V values in the area where there is " \
+                        "movement is greater than the allowed amount."
 
-#             self.assertTrue(check_v, error_msg)
+            self.assertTrue(check_v, error_msg)
 
 if __name__ == "__main__":
     unittest.main()
