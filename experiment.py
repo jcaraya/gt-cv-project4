@@ -409,10 +409,10 @@ def part_5a():
     cv2.imwrite(os.path.join(output_dir, "quiver.png"), u_v)
 
     I00 = shift_0
-    I02 = ps4.warp(shift_0, -0.2 * u, -0.2 * v, interpolation, border_mode)
-    I04 = ps4.warp(shift_0, -0.4 * u, -0.4 * v, interpolation, border_mode)
-    I06 = ps4.warp(shift_0, -0.6 * u, -0.6 * v, interpolation, border_mode)
-    I08 = ps4.warp(shift_0, -0.8 * u, -0.8 * v, interpolation, border_mode)
+    I02 = ps4.warp(shift_r10, 0.8 * u, 0.8 * v, interpolation, border_mode)
+    I04 = ps4.warp(shift_r10, 0.6 * u, 0.6 * v, interpolation, border_mode)
+    I06 = ps4.warp(shift_r10, 0.4 * u, 0.4 * v, interpolation, border_mode)
+    I08 = ps4.warp(shift_r10, 0.2 * u, 0.2 * v, interpolation, border_mode)
     I10 = shift_r10
 
     cv2.imwrite(os.path.join(output_dir, "I00.png"), ps4.normalize_and_scale(I00))
@@ -435,41 +435,52 @@ def part_5b():
 
     mc01 = cv2.imread(os.path.join(input_dir, 'MiniCooper', 'mc01.png'), 0) / 255.
     mc02 = cv2.imread(os.path.join(input_dir, 'MiniCooper', 'mc02.png'), 0) / 255.
+    mc03 = cv2.imread(os.path.join(input_dir, 'MiniCooper', 'mc03.png'), 0) / 255.
 
-    levels = 15
-    k_size = 45
+    levels = 10
+    k_size = 39
     k_type = 'gaussian'
-    sigma = 25
+    sigma =  55
     interpolation = cv2.INTER_CUBIC
     border_mode = cv2.BORDER_REFLECT101
 
-    blur_mc01 = np.copy(mc01)
-    blur_mc02 = np.copy(mc02)
-
-    u, v = ps4.hierarchical_lk(blur_mc01, blur_mc02, levels, k_size, k_type,
+    u, v = ps4.hierarchical_lk(mc01, mc02, levels, k_size, k_type,
                                    sigma, interpolation, border_mode)
 
-    # gaussian_sigma = 20
-    # gaussian_ksize = (55, 55)
-    # blur_mc01 = cv2.GaussianBlur(mc01, gaussian_ksize, gaussian_sigma)
-    # blur_mc02 = cv2.GaussianBlur(mc02, gaussian_ksize, gaussian_sigma)
+    u, v = ps4.hierarchical_lk(mc02, mc03, levels, k_size, k_type,
+                                   sigma, interpolation, border_mode)
 
-    u_v = quiver(u, v, scale=1, stride=10)
+    u_v = quiver(u, v, scale=2, stride=10)
     cv2.imwrite(os.path.join(output_dir, "quiver.png"), u_v)
 
-    I00 = mc01
-    I02 = ps4.warp(mc02, 0.8 * u, 0.8 * v, interpolation, border_mode)
-    I04 = ps4.warp(mc02, 0.6 * u, 0.6 * v, interpolation, border_mode)
-    I06 = ps4.warp(mc02, 0.4 * u, 0.4 * v, interpolation, border_mode)
-    I08 = ps4.warp(mc02, 0.2 * u, 0.2 * v, interpolation, border_mode)
-    I10 = mc02
+    I10 = mc01
+    I12 = ps4.warp(mc02, 1.1 * u, 1.1 * v, interpolation, border_mode)
+    I14 = ps4.warp(mc02, 0.8 * u, 0.8 * v, interpolation, border_mode)
+    I16 = ps4.warp(mc02, 0.6 * u, 0.6 * v, interpolation, border_mode)
+    I18 = ps4.warp(mc02, 0.3 * u, 0.3 * v, interpolation, border_mode)
+    I20 = mc02
+    I22 = ps4.warp(mc02, -0.2 * u, -0.2 * v, interpolation, border_mode)
+    I24 = ps4.warp(mc02, -0.6 * u, -0.6 * v, interpolation, border_mode)
+    I26 = ps4.warp(mc02, -1.0 * u, -1.0 * v, interpolation, border_mode)
+    I28 = ps4.warp(mc02, -1.4 * u, -1.4 * v, interpolation, border_mode)
+    I30 = mc03
+    # I22 = ps4.warp(mc03, 1.1 * u, 1.1 * v, interpolation, border_mode)
+    # I24 = ps4.warp(mc03, 0.8 * u, 0.8 * v, interpolation, border_mode)
+    # I26 = ps4.warp(mc03, 0.6 * u, 0.6 * v, interpolation, border_mode)
+    # I28 = ps4.warp(mc03, 0.3 * u, 0.3 * v, interpolation, border_mode)
+    # I30 = mc03
 
-    cv2.imwrite(os.path.join(output_dir, "I00.png"), ps4.normalize_and_scale(I00))
-    cv2.imwrite(os.path.join(output_dir, "I02.png"), ps4.normalize_and_scale(I02))
-    cv2.imwrite(os.path.join(output_dir, "I04.png"), ps4.normalize_and_scale(I04))
-    cv2.imwrite(os.path.join(output_dir, "I06.png"), ps4.normalize_and_scale(I06))
-    cv2.imwrite(os.path.join(output_dir, "I08.png"), ps4.normalize_and_scale(I08))
     cv2.imwrite(os.path.join(output_dir, "I10.png"), ps4.normalize_and_scale(I10))
+    cv2.imwrite(os.path.join(output_dir, "I12.png"), ps4.normalize_and_scale(I12))
+    cv2.imwrite(os.path.join(output_dir, "I14.png"), ps4.normalize_and_scale(I14))
+    cv2.imwrite(os.path.join(output_dir, "I16.png"), ps4.normalize_and_scale(I16))
+    cv2.imwrite(os.path.join(output_dir, "I18.png"), ps4.normalize_and_scale(I18))
+    cv2.imwrite(os.path.join(output_dir, "I20.png"), ps4.normalize_and_scale(I20))
+    cv2.imwrite(os.path.join(output_dir, "I22.png"), ps4.normalize_and_scale(I22))
+    cv2.imwrite(os.path.join(output_dir, "I24.png"), ps4.normalize_and_scale(I24))
+    cv2.imwrite(os.path.join(output_dir, "I26.png"), ps4.normalize_and_scale(I26))
+    cv2.imwrite(os.path.join(output_dir, "I28.png"), ps4.normalize_and_scale(I28))
+    cv2.imwrite(os.path.join(output_dir, "I30.png"), ps4.normalize_and_scale(I30))
 
 
 def part_6():

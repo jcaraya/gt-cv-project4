@@ -269,7 +269,7 @@ def create_combined_img(img_list):
     dst = np.zeros((y_size, x_size))
     x_position = 0
     for img in img_list:
-        dst[0:img.shape[0], x_position:x_position+img.shape[1]] = img
+        dst[0:img.shape[0], x_position:x_position+img.shape[1]] = normalize_and_scale(img)
         x_position = x_position+img.shape[1]
 
     return dst
@@ -317,7 +317,11 @@ def laplacian_pyramid(g_pyr):
         list: Laplacian pyramid, with l_pyr[-1] = g_pyr[-1].
     """
     # Compute the difference at each l.
-    l_pyr = [g_pyr[i-1] - expand_image(g_pyr[i]) for i in range(1,len(g_pyr))]
+    l_pyr = []
+    for imga, imgb in zip(g_pyr[:-1], g_pyr[1:]):
+        expanded = expand_image(imgb)
+        diff = imga - expanded[:imga.shape[0], :imga.shape[1]]
+        l_pyr.append(diff)
 
     # Add the smallest gaussian at the very end
     l_pyr.append(g_pyr[-1])
