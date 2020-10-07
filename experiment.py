@@ -436,39 +436,79 @@ def part_5b():
     mc01 = cv2.imread(os.path.join(input_dir, 'MiniCooper', 'mc01.png'), 0) / 255.
     mc02 = cv2.imread(os.path.join(input_dir, 'MiniCooper', 'mc02.png'), 0) / 255.
     mc03 = cv2.imread(os.path.join(input_dir, 'MiniCooper', 'mc03.png'), 0) / 255.
+    shape = mc01.shape
 
-    levels = 10
-    k_size = 39
+    levels = 12
+    k_size = 37
     k_type = 'gaussian'
-    sigma =  55
+    sigma = 8
     interpolation = cv2.INTER_CUBIC
     border_mode = cv2.BORDER_REFLECT101
 
-    u, v = ps4.hierarchical_lk(mc01, mc02, levels, k_size, k_type,
+    blur_mc01 = np.copy(mc01)
+    blur_mc02 = np.copy(mc02)
+
+    u, v = ps4.hierarchical_lk(blur_mc01, blur_mc02, levels, k_size, k_type,
                                    sigma, interpolation, border_mode)
 
+    gaussian_sigma = 5
+    gaussian_ksize = (25, 25)
+    u = cv2.GaussianBlur(u, gaussian_ksize, gaussian_sigma)
+    v = cv2.GaussianBlur(v, gaussian_ksize, gaussian_sigma)
+
+    u_v = quiver(u, v, scale=2, stride=10)
+    cv2.imwrite(os.path.join(output_dir, "quiver1.png"), u_v)
+
+    I10 = mc01
+    I20 = mc02
+    I30 = mc03
+
+    I12 = ps4.warp(mc01, -0.4 * u, -0.4 * v, interpolation, border_mode)
+    I14 = ps4.warp(mc01, -0.7 * u, -0.7 * v, interpolation, border_mode)
+    I16 = ps4.warp(mc01, -1.0 * u, -1.0 * v, interpolation, border_mode)
+    I18 = ps4.warp(mc01, -1.3 * u, -1.3 * v, interpolation, border_mode)
+    # I12 = ps4.warp(mc02, 0.8 * u, 0.8 * v, interpolation, border_mode)
+    # I14 = ps4.warp(mc02, 0.6 * u, 0.6 * v, interpolation, border_mode)
+    # I16 = ps4.warp(mc02, 0.4 * u, 0.4 * v, interpolation, border_mode)
+    # I18 = ps4.warp(mc02, 0.2 * u, 0.2 * v, interpolation, border_mode)
+
+    res1 = np.concatenate([I10, I12, I14], axis=1)
+    res2 = np.concatenate([I16, I18, I20], axis=1)
+    res3 = np.concatenate([res1, res2])
+    cv2.imwrite(os.path.join(output_dir, "ps4-5-b-1.png"), ps4.normalize_and_scale(res3))
+
+
+    levels = 10
+    k_size = 31
+    k_type = 'uniform'
+    sigma = 12
+    interpolation = cv2.INTER_CUBIC
+    border_mode = cv2.BORDER_REFLECT101
     u, v = ps4.hierarchical_lk(mc02, mc03, levels, k_size, k_type,
                                    sigma, interpolation, border_mode)
 
-    u_v = quiver(u, v, scale=2, stride=10)
-    cv2.imwrite(os.path.join(output_dir, "quiver.png"), u_v)
+    gaussian_sigma = 5
+    gaussian_ksize = (25, 25)
+    u = cv2.GaussianBlur(u, gaussian_ksize, gaussian_sigma)
+    v = cv2.GaussianBlur(v, gaussian_ksize, gaussian_sigma)
 
-    I10 = mc01
-    I12 = ps4.warp(mc02, 1.1 * u, 1.1 * v, interpolation, border_mode)
-    I14 = ps4.warp(mc02, 0.8 * u, 0.8 * v, interpolation, border_mode)
-    I16 = ps4.warp(mc02, 0.6 * u, 0.6 * v, interpolation, border_mode)
-    I18 = ps4.warp(mc02, 0.3 * u, 0.3 * v, interpolation, border_mode)
-    I20 = mc02
-    I22 = ps4.warp(mc02, -0.2 * u, -0.2 * v, interpolation, border_mode)
-    I24 = ps4.warp(mc02, -0.6 * u, -0.6 * v, interpolation, border_mode)
+    u_v = quiver(u, v, scale=2, stride=10)
+    cv2.imwrite(os.path.join(output_dir, "quiver2.png"), u_v)
+
+    I22 = ps4.warp(mc02, -0.4 * u, -0.4 * v, interpolation, border_mode)
+    I24 = ps4.warp(mc02, -0.7 * u, -0.7 * v, interpolation, border_mode)
     I26 = ps4.warp(mc02, -1.0 * u, -1.0 * v, interpolation, border_mode)
     I28 = ps4.warp(mc02, -1.4 * u, -1.4 * v, interpolation, border_mode)
-    I30 = mc03
-    # I22 = ps4.warp(mc03, 1.1 * u, 1.1 * v, interpolation, border_mode)
-    # I24 = ps4.warp(mc03, 0.8 * u, 0.8 * v, interpolation, border_mode)
-    # I26 = ps4.warp(mc03, 0.6 * u, 0.6 * v, interpolation, border_mode)
-    # I28 = ps4.warp(mc03, 0.3 * u, 0.3 * v, interpolation, border_mode)
-    # I30 = mc03
+    # I22 = ps4.warp(mc03, 0.8 * u, 0.8 * v, interpolation, border_mode)
+    # I24 = ps4.warp(mc03, 0.6 * u, 0.6 * v, interpolation, border_mode)
+    # I26 = ps4.warp(mc03, 0.4 * u, 0.4 * v, interpolation, border_mode)
+    # I28 = ps4.warp(mc03, 0.2 * u, 0.2 * v, interpolation, border_mode)
+
+    res1 = np.concatenate([I20, I22, I24], axis=1)
+    res2 = np.concatenate([I26, I28, I30], axis=1)
+    res3 = np.concatenate([res1, res2])
+    cv2.imwrite(os.path.join(output_dir, "ps4-5-b-2.png"), ps4.normalize_and_scale(res3))
+
 
     cv2.imwrite(os.path.join(output_dir, "I10.png"), ps4.normalize_and_scale(I10))
     cv2.imwrite(os.path.join(output_dir, "I12.png"), ps4.normalize_and_scale(I12))
